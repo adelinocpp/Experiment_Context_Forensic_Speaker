@@ -1,0 +1,12 @@
+.spyproject
+__pycache__
+Imagens
+briefing
+.spyproject/*
+__pycache__/*
+Imagens/*
+briefing/*
+*.pth
+*.png
+*.jpg
+*.txt
