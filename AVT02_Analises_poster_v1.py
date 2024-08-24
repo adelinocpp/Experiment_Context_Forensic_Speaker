@@ -12,7 +12,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from utils.phonokepping import ajustVowelTag, FoneticaToTable
-from scipy.stats import f_oneway, tukey_hsd, gaussian_kde # norm
+from scipy.stats import f_oneway, tukey_hsd, gaussian_kde, t, sem # norm
 from scipy.special import expit
 from scipy import linalg
 from sklearn.decomposition import PCA
@@ -364,7 +364,7 @@ FEATURE_NORMALIZATION = True
 if (FEATURE_NORMALIZATION):
     for kFeat in lstFeatures:
         df_VOGAIS.loc[df_VOGAIS.index,kFeat] = (df_VOGAIS.loc[df_VOGAIS.index,kFeat] - df_VOGAIS[kFeat].mean())/df_VOGAIS[kFeat].std()
-sys.exit()
+# sys.exit()
 VOWEL_STATISTICS =  False
 if (VOWEL_STATISTICS):
     vowelStats = df_VOGAIS.groupby('Fonetica').count()['ID']    
@@ -917,8 +917,17 @@ lstFPR = [smfFPR,pcaFPR,rawFPR,smfFPRar,smfFPRvc]
 lstFNR = [smfFNR,pcaFNR,rawFNR,smfFNRar,smfFNRvc]
 lstTags = ['GLM-RES','PCA','VA','GLM-RES-A','GLM-RES-V']
 
-
-
+#t.interval(0.95, len(smfACC)-1, loc=np.mean(smfACC), scale=sem(smfACC))
+for iV in lstACC:
+    a,b = t.interval(0.95, len(iV)-1, loc=np.mean(iV), scale=sem(iV))
+    print("{:.1f} ({:.1f}; {:.1f})".format(np.mean(iV),a,b).replace(".",","))
+for iV in lstFPR:
+    a,b = t.interval(0.95, len(iV)-1, loc=np.mean(iV), scale=sem(iV))
+    print("{:.1f} ({:.1f}; {:.1f})".format(np.mean(iV),a,b).replace(".",","))
+for iV in lstFNR:
+    a,b = t.interval(0.95, len(iV)-1, loc=np.mean(iV), scale=sem(iV))
+    print("{:.1f} ({:.1f}; {:.1f})".format(np.mean(iV),a,b).replace(".",","))    
+    
 tagsComp, limitsComp, _, _ = anovaResult(lstACC,lstTags,
                                             'Anova_Acuracia.txt')
 meanPeca = [0.5*(limitsC[1] + limitsC[0]) for limitsC in limitsComp]
